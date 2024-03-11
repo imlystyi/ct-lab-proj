@@ -3,7 +3,7 @@ module "labels" {
   name   = var.name
 }
 
-# region function: get_all_authors
+# region lambda: get_all_authors
 
 resource "aws_iam_role" "get_all_authors_lambda_role" {
   name = "${module.labels.id}-get-all-authors-lambda-role"
@@ -27,8 +27,6 @@ resource "aws_iam_policy" "get_all_authors_lambda_policy" {
     Version = "2012-10-17",
     Statement = [{
       Action = [
-        "dynamodb:DeleteItem",
-        "dynamodb:GetItem",
         "dynamodb:Scan",
         ],
       Resource = var.dynamodb_authors_arn,
