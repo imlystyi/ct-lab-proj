@@ -12,6 +12,12 @@ data "archive_file" "get_all_authors" {
   output_path = "lambda/functions/get-all-authors/get-all-authors.zip"
 }
 
+data "archive_file" "get_all_courses" {
+  type        = "zip"
+  source_file = "lambda/functions/get-all-courses/get-all-courses.js"
+  output_path = "lambda/functions/get-all-courses/get-all-courses.zip"
+}
+
 data "archive_file" "save_course" {
   type        = "zip"
   source_file = "lambda/functions/save-course/save-course.js"
@@ -40,6 +46,22 @@ resource "aws_lambda_function" "get_all_authors" {
   environment {
     variables = {
       "TABLE_NAME" = "authors"
+    }
+  }
+}
+
+resource "aws_lambda_function" "get_all_courses" {
+  filename      = data.archive_file.get_all_courses.output_path
+  function_name = "${module.labels.id}-get-all-courses"
+  role          = var.get_all_courses_arn
+  handler       = "get-all-courses.handler"
+
+  source_code_hash = data.archive_file.get_all_courses.output_base64sha256
+
+  runtime = "nodejs16.x"
+  environment {
+    variables = {
+      "TABLE_NAME" = "courses"
     }
   }
 }
@@ -75,4 +97,5 @@ resource "aws_lambda_function" "update_course" {
     }
   }
 }
+
 #endregion

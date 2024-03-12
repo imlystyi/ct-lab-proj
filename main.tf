@@ -20,7 +20,8 @@ module "lambda" {
   source = "./lambda"
   name   = "lambda"
 
-  get_all_authors_arn = module.iam.get_all_authors_role_arn
+  get_all_authors_arn = module.iam.get_all_authors_lambda_role_arn
+  get_all_courses_arn = module.iam.get_all_courses_lambda_role_arn
   save_course_arn     = module.iam.put_course_lambda_role_arn
   update_course_arn   = module.iam.put_course_lambda_role_arn
 }
