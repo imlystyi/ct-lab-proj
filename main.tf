@@ -25,4 +25,5 @@ module "lambda" {
   get_course_arn      = module.iam.get_course_lambda_role_arn
   save_course_arn     = module.iam.put_course_lambda_role_arn
   update_course_arn   = module.iam.put_course_lambda_role_arn
+  delete_course_arn   = module.iam.delete_course_lambda_role_arn
 }

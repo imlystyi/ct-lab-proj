@@ -13,3 +13,7 @@ output "get_course_lambda_role_arn" {
 output "put_course_lambda_role_arn" {
   value = aws_iam_role.put_course_lambda_role.arn
 }
+
+output "delete_course_lambda_role_arn" {
+  value = aws_iam_role.delete_course_lambda_role.arn
+}
