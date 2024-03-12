@@ -18,6 +18,12 @@ data "archive_file" "save_course" {
   output_path = "lambda/functions/save-course/save-course.zip"
 }
 
+data "archive_file" "update_course" {
+  type        = "zip"
+  source_file = "lambda/functions/update-course/update-course.js"
+  output_path = "lambda/functions/update-course/update-course.zip"
+}
+
 #endregion
 
 #region Lambdas
@@ -54,4 +60,19 @@ resource "aws_lambda_function" "save_course" {
   }
 }
 
+resource "aws_lambda_function" "update_course" {
+  filename      = data.archive_file.update_course.output_path
+  function_name = "${module.labels.id}-update-course"
+  role          = var.update_course_arn
+  handler       = "update-course.handler"
+
+  source_code_hash = data.archive_file.update_course.output_base64sha256
+
+  runtime = "nodejs16.x"
+  environment {
+    variables = {
+      "TABLE_NAME" = "courses"
+    }
+  }
+}
 #endregion
