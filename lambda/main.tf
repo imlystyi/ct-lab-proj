@@ -18,6 +18,12 @@ data "archive_file" "get_all_courses" {
   output_path = "lambda/functions/get-all-courses/get-all-courses.zip"
 }
 
+data "archive_file" "get_course" {
+  type        = "zip"
+  source_file = "lambda/functions/get-course/get-course.js"
+  output_path = "lambda/functions/get-course/get-course.zip"
+}
+
 data "archive_file" "save_course" {
   type        = "zip"
   source_file = "lambda/functions/save-course/save-course.js"
@@ -57,6 +63,22 @@ resource "aws_lambda_function" "get_all_courses" {
   handler       = "get-all-courses.handler"
 
   source_code_hash = data.archive_file.get_all_courses.output_base64sha256
+
+  runtime = "nodejs16.x"
+  environment {
+    variables = {
+      "TABLE_NAME" = "courses"
+    }
+  }
+}
+
+resource "aws_lambda_function" "get_course" {
+  filename      = data.archive_file.get_course.output_path
+  function_name = "${module.labels.id}-get-course"
+  role          = var.get_course_arn
+  handler       = "get-course.handler"
+
+  source_code_hash = data.archive_file.get_course.output_base64sha256
 
   runtime = "nodejs16.x"
   environment {
