@@ -1,3 +1,13 @@
+module "iam" {
+  source = "./iam"
+  name   = "iam"
+
+  dynamodb_authors_arn = module.dynamodb_authors.dynamodb_arn
+  dynamodb_courses_arn = module.dynamodb_courses.dynamodb_arn
+}
+
+# region DynamoDB tables
+
 module "dynamodb_authors" {
   source  = "./dynamodb"
   name    = "authors"
@@ -8,12 +18,16 @@ module "dynamodb_courses" {
   name    = "courses"
 }
 
-module "iam" {
-  source = "./iam"
-  name   = "iam"
+# endregion
 
-  dynamodb_authors_arn = module.dynamodb_authors.dynamodb_arn
-  dynamodb_courses_arn = module.dynamodb_courses.dynamodb_arn
+module "api" {
+  source = "./api"
+
+  name  = "api"
+  stage = "dev"
+
+  get_all_authors_arn        = module.lambda.get_all_authors_arn
+  get_all_authors_invoke_arn = module.lambda.get_all_authors_invoke_arn
 }
 
 module "lambda" {
