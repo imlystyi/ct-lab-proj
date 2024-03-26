@@ -25,23 +25,23 @@ resource "aws_api_gateway_deployment" "this" {
   }
 }
 
-resource "aws_api_gateway_stage" "dev_stage" {
+resource "aws_api_gateway_stage" "dev" {
   stage_name    = "${module.labels.stage}-stage"
   deployment_id = aws_api_gateway_deployment.this.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
 }
 
-resource "aws_api_gateway_resource" "authors_api_resource" {
+resource "aws_api_gateway_resource" "authors" {
   rest_api_id = aws_api_gateway_rest_api.main.id
   parent_id   = aws_api_gateway_rest_api.main.root_resource_id
-  path_part   = "authors"
+  path_part   = "author"
 }
 
 # region Methods
 
-resource "aws_api_gateway_method" "get_all_authors_method" {
+resource "aws_api_gateway_method" "get_all_authors" {
   rest_api_id   = aws_api_gateway_rest_api.main.id
-  resource_id   = aws_api_gateway_resource.authors_api_resource.id
+  resource_id   = aws_api_gateway_resource.authors.id
   http_method   = "GET"
   authorization = "NONE"
 }
@@ -50,10 +50,10 @@ resource "aws_api_gateway_method" "get_all_authors_method" {
 
 # resource Integrations
 
-resource "aws_api_gateway_integration" "get_all_authors_integration" {
+resource "aws_api_gateway_integration" "get_all_authors" {
   rest_api_id             = aws_api_gateway_rest_api.main.id
-  resource_id             = aws_api_gateway_resource.authors_api_resource.id
-  http_method             = aws_api_gateway_method.get_all_authors_method.http_method
+  resource_id             = aws_api_gateway_resource.authors.id
+  http_method             = aws_api_gateway_method.get_all_authors.http_method
   integration_http_method = "POST"
   type                    = "AWS"
 
@@ -64,7 +64,7 @@ resource "aws_api_gateway_integration" "get_all_authors_integration" {
 
 # region Lambda permissions
 
-resource "aws_lambda_permission" "get_all_authors_permission" {
+resource "aws_lambda_permission" "get_all_authors" {
   statement_id  = "AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = var.get_all_authors_arn
@@ -77,10 +77,10 @@ resource "aws_lambda_permission" "get_all_authors_permission" {
 
 # region Method responses
 
-resource "aws_api_gateway_method_response" "get_all_authors_method_response" {
+resource "aws_api_gateway_method_response" "get_all_authors" {
   rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.authors_api_resource.id
-  http_method = aws_api_gateway_method.get_all_authors_method.http_method
+  resource_id = aws_api_gateway_resource.authors.id
+  http_method = aws_api_gateway_method.get_all_authors.http_method
   status_code = "200"
 }
 
@@ -88,11 +88,11 @@ resource "aws_api_gateway_method_response" "get_all_authors_method_response" {
 
 # region Integration responses
 
-resource "aws_api_gateway_integration_response" "get_all_authors_integration_response" {
+resource "aws_api_gateway_integration_response" "get_all_authors" {
   rest_api_id = aws_api_gateway_rest_api.main.id
-  resource_id = aws_api_gateway_resource.authors_api_resource.id
-  http_method = aws_api_gateway_method.get_all_authors_method.http_method
-  status_code = aws_api_gateway_method_response.get_all_authors_method_response.status_code
+  resource_id = aws_api_gateway_resource.authors.id
+  http_method = aws_api_gateway_method.get_all_authors.http_method
+  status_code = aws_api_gateway_method_response.get_all_authors.status_code
 }
 
 # endregion

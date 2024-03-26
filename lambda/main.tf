@@ -5,7 +5,7 @@ module "labels" {
   stage = var.stage
 }
 
-#region Archive files data
+#region Archive files
 
 data "archive_file" "get_all_authors" {
   type        = "zip"
