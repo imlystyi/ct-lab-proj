@@ -1,7 +1,8 @@
 module "labels" {
-  source      = "cloudposse/label/null"
-  name        = var.name
-  label_order = var.label_order
+  source = "cloudposse/label/null"
+
+  name  = var.name
+  stage = var.stage
 }
 
 #region Archive files data

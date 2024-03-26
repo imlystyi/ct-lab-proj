@@ -1,6 +1,8 @@
 module "labels" {
   source = "cloudposse/label/null"
-  name   = var.name
+
+  name  = var.name
+  stage = var.stage
 }
 
 resource "aws_dynamodb_table" "this" {
