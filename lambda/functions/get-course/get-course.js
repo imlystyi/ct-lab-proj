@@ -11,7 +11,7 @@ exports.handler = (event, context, callback) => {
         S: event.id
       }
     },
-    TableName: "courses"
+    TableName: "course"
   };
   dynamodb.getItem(params, (err, data) => {
     if (err) {

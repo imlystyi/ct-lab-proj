@@ -1,12 +1,14 @@
 module "labels" {
   source = "cloudposse/label/null"
-  name   = var.name
+
+  name  = var.name
+  stage = var.stage
 }
 
 #region Roles
 
-resource "aws_iam_role" "get_all_authors_lambda_role" {
-  name = "${module.labels.id}-get-all-authors-lambda-role"
+resource "aws_iam_role" "get_all_authors" {
+  name = "${module.labels.id}-get-all-authors-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -20,8 +22,8 @@ resource "aws_iam_role" "get_all_authors_lambda_role" {
   })
 }
 
-resource "aws_iam_role" "get_all_courses_lambda_role" {
-  name = "${module.labels.id}-get-all-courses-lambda-role"
+resource "aws_iam_role" "get_all_courses" {
+  name = "${module.labels.id}-get-all-courses-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -35,8 +37,8 @@ resource "aws_iam_role" "get_all_courses_lambda_role" {
   })
 }
 
-resource "aws_iam_role" "get_course_lambda_role" {
-  name = "${module.labels.id}-get-course-lambda-role"
+resource "aws_iam_role" "get_course" {
+  name = "${module.labels.id}-get-course-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -50,8 +52,8 @@ resource "aws_iam_role" "get_course_lambda_role" {
   })
 }
 
-resource "aws_iam_role" "put_course_lambda_role" {
-  name = "${module.labels.id}-put-course-lambda-role"
+resource "aws_iam_role" "put_course" {
+  name = "${module.labels.id}-put-course-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -65,8 +67,8 @@ resource "aws_iam_role" "put_course_lambda_role" {
   })
 }
 
-resource "aws_iam_role" "delete_course_lambda_role" {
-  name = "${module.labels.id}-delete-course-lambda-role"
+resource "aws_iam_role" "delete_course" {
+  name = "${module.labels.id}-delete-course-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -84,8 +86,8 @@ resource "aws_iam_role" "delete_course_lambda_role" {
 
 # region Policies
 
-resource "aws_iam_policy" "get_all_authors_lambda_policy" {
-  name = "${module.labels.id}-get-all-authors-lambda-policy"
+resource "aws_iam_policy" "get_all_authors" {
+  name = "${module.labels.id}-get-all-authors-policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -93,7 +95,7 @@ resource "aws_iam_policy" "get_all_authors_lambda_policy" {
       Action = [
         "dynamodb:Scan",
         ],
-      Resource = var.dynamodb_authors_arn,
+      Resource = var.dynamodb_author_arn,
       Effect   = "Allow"
     },
     {
@@ -108,16 +110,16 @@ resource "aws_iam_policy" "get_all_authors_lambda_policy" {
   })
 }
 
-resource "aws_iam_policy" "get_all_courses_lambda_policy" {
-  name = "${module.labels.id}-get-all-courses-lambda-policy"
+resource "aws_iam_policy" "get_all_courses" {
+  name = "${module.labels.id}-get-all-courses-policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [{
       Action = [
-        "dynamodb:Scan",
+        "dynamodb:Scan"
         ],
-      Resource = var.dynamodb_courses_arn,
+      Resource = var.dynamodb_course_arn,
       Effect   = "Allow"
     },
     {
@@ -132,8 +134,8 @@ resource "aws_iam_policy" "get_all_courses_lambda_policy" {
   })
 }
 
-resource "aws_iam_policy" "get_course_lambda_policy" {
-  name = "${module.labels.id}-get-course-lambda-policy"
+resource "aws_iam_policy" "get_course" {
+  name = "${module.labels.id}-get-course-policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -141,7 +143,7 @@ resource "aws_iam_policy" "get_course_lambda_policy" {
       Action = [
         "dynamodb:GetItem"
         ],
-      Resource = var.dynamodb_courses_arn,
+      Resource = var.dynamodb_course_arn,
       Effect   = "Allow"
     },
     {
@@ -156,8 +158,8 @@ resource "aws_iam_policy" "get_course_lambda_policy" {
   })
 }
 
-resource "aws_iam_policy" "put_course_lambda_policy" {
-  name = "${module.labels.id}-put-course-lambda-policy"
+resource "aws_iam_policy" "put_course" {
+  name = "${module.labels.id}-put-course-policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -165,7 +167,7 @@ resource "aws_iam_policy" "put_course_lambda_policy" {
       Action = [
         "dynamodb:PutItem"
         ],
-      Resource = var.dynamodb_courses_arn,
+      Resource = var.dynamodb_course_arn,
       Effect   = "Allow"
     },
     {
@@ -180,8 +182,8 @@ resource "aws_iam_policy" "put_course_lambda_policy" {
   })
 }
 
-resource "aws_iam_policy" "delete_course_lambda_policy" {
-  name = "${module.labels.id}-delete-course-lambda-policy"
+resource "aws_iam_policy" "delete_course" {
+  name = "${module.labels.id}-delete-course-policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -189,7 +191,7 @@ resource "aws_iam_policy" "delete_course_lambda_policy" {
       Action = [
         "dynamodb:DeleteItem"
         ],
-      Resource = var.dynamodb_courses_arn,
+      Resource = var.dynamodb_course_arn,
       Effect   = "Allow"
     },
     {
@@ -208,29 +210,29 @@ resource "aws_iam_policy" "delete_course_lambda_policy" {
 
 # region Policy attachments
 
-resource "aws_iam_role_policy_attachment" "get_all_authors_lambda_policy_attachment" {
-  role       = aws_iam_role.get_all_authors_lambda_role.name
-  policy_arn = aws_iam_policy.get_all_authors_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "get_all_authors" {
+  role       = aws_iam_role.get_all_authors.name
+  policy_arn = aws_iam_policy.get_all_authors.arn
 }
 
-resource "aws_iam_role_policy_attachment" "get_all_courses_lambda_policy_attachment" {
-  role       = aws_iam_role.get_all_courses_lambda_role.name
-  policy_arn = aws_iam_policy.get_all_courses_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "get_all_courses" {
+  role       = aws_iam_role.get_all_courses.name
+  policy_arn = aws_iam_policy.get_all_courses.arn
 }
 
-resource "aws_iam_role_policy_attachment" "get_course_lambda_policy_attachment" {
-  role       = aws_iam_role.get_course_lambda_role.name
-  policy_arn = aws_iam_policy.get_course_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "get_course" {
+  role       = aws_iam_role.get_course.name
+  policy_arn = aws_iam_policy.get_course.arn
 }
 
-resource "aws_iam_role_policy_attachment" "put_course_lambda_policy_attachment" {
-  role       = aws_iam_role.put_course_lambda_role.name
-  policy_arn = aws_iam_policy.put_course_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "put_course" {
+  role       = aws_iam_role.put_course.name
+  policy_arn = aws_iam_policy.put_course.arn
 }
 
-resource "aws_iam_role_policy_attachment" "delete_course_lambda_policy_attachment" {
-  role       = aws_iam_role.delete_course_lambda_role.name
-  policy_arn = aws_iam_policy.delete_course_lambda_policy.arn
+resource "aws_iam_role_policy_attachment" "delete_course" {
+  role       = aws_iam_role.delete_course.name
+  policy_arn = aws_iam_policy.delete_course.arn
 }
 
 # endregion

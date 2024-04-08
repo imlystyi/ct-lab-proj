@@ -1,10 +1,11 @@
 module "labels" {
-  source      = "cloudposse/label/null"
-  name        = var.name
-  label_order = var.label_order
+  source = "cloudposse/label/null"
+
+  name  = var.name
+  stage = var.stage
 }
 
-#region Archive files data
+#region Archive files
 
 data "archive_file" "get_all_authors" {
   type        = "zip"
@@ -57,7 +58,7 @@ resource "aws_lambda_function" "get_all_authors" {
   runtime = "nodejs16.x"
   environment {
     variables = {
-      "TABLE_NAME" = "authors"
+      "TABLE_NAME" = "author"
     }
   }
 }
@@ -73,7 +74,7 @@ resource "aws_lambda_function" "get_all_courses" {
   runtime = "nodejs16.x"
   environment {
     variables = {
-      "TABLE_NAME" = "courses"
+      "TABLE_NAME" = "course"
     }
   }
 }
@@ -89,7 +90,7 @@ resource "aws_lambda_function" "get_course" {
   runtime = "nodejs16.x"
   environment {
     variables = {
-      "TABLE_NAME" = "courses"
+      "TABLE_NAME" = "course"
     }
   }
 }
@@ -105,7 +106,7 @@ resource "aws_lambda_function" "save_course" {
   runtime = "nodejs16.x"
   environment {
     variables = {
-      "TABLE_NAME" = "courses"
+      "TABLE_NAME" = "course"
     }
   }
 }
@@ -121,7 +122,7 @@ resource "aws_lambda_function" "update_course" {
   runtime = "nodejs16.x"
   environment {
     variables = {
-      "TABLE_NAME" = "courses"
+      "TABLE_NAME" = "course"
     }
   }
 }
@@ -137,7 +138,7 @@ resource "aws_lambda_function" "delete_course" {
   runtime = "nodejs16.x"
   environment {
     variables = {
-      "TABLE_NAME" = "courses"
+      "TABLE_NAME" = "course"
     }
   }
 }

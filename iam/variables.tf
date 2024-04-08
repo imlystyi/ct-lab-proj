@@ -1,7 +1,7 @@
-variable "dynamodb_authors_arn" {
+variable "dynamodb_author_arn" {
   type = string
 }
 
-variable "dynamodb_courses_arn" {
+variable "dynamodb_course_arn" {
   type = string
 }
