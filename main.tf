@@ -58,3 +58,10 @@ module "api" {
   update_course_invoke_arn   = module.lambda.update_course_invoke_arn
   delete_course_invoke_arn   = module.lambda.delete_course_invoke_arn
 }
+
+module "s3" {
+  source = "./s3"
+
+  name  = "s3"
+  stage = "dev"
+}

@@ -41,4 +41,7 @@ terraform.rc
 # Ignore test .json files
 test_*.json
 
+# Ignore build folder
+build/
+
 # End of https://www.toptal.com/developers/gitignore/api/terraform
