@@ -43,6 +43,12 @@ data "archive_file" "delete_course" {
   output_path = "lambda/functions/delete-course/delete-course.zip"
 }
 
+data "archive_file" "notify" {
+  type        = "zip"
+  source_file = "lambda/functions/notify/notify.py"
+  output_path = "lambda/functions/notify/notify.zip"
+}
+
 #endregion
 
 #region Lambdas
@@ -141,6 +147,17 @@ resource "aws_lambda_function" "delete_course" {
       "TABLE_NAME" = "course"
     }
   }
+}
+
+resource "aws_lambda_function" "notify" {
+  filename      = data.archive_file.notify.output_path
+  function_name = "${module.labels.id}-notify"
+  role          = var.notify_arn
+  handler       = "notify.handler"
+
+  source_code_hash = data.archive_file.notify.output_base64sha256
+
+  runtime = "python3.9"
 }
 
 #endregion

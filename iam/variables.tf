@@ -5,3 +5,7 @@ variable "dynamodb_author_arn" {
 variable "dynamodb_course_arn" {
   type = string
 }
+
+variable "sns_topic_arn" {
+  type = string
+}

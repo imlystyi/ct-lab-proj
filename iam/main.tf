@@ -82,6 +82,21 @@ resource "aws_iam_role" "delete_course" {
   })
 }
 
+resource "aws_iam_role" "notify" {
+  name = "${module.labels.id}-notify-lambda-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = "sts:AssumeRole",
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      },
+      Effect = "Allow"
+    }]
+  })
+}
+
 #endregion
 
 # region Policies
@@ -206,6 +221,30 @@ resource "aws_iam_policy" "delete_course" {
   })
 }
 
+resource "aws_iam_policy" "notify" {
+  name = "${module.labels.id}-notify-lambda-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Action = [
+        "sns:Publish"
+        ],
+      Resource = var.sns_topic_arn,
+      Effect   = "Allow"
+    },
+    {
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      Resource = "arn:aws:logs:*:*:*",
+      Effect   = "Allow"
+    }]
+  })
+}
+
 #endregion
 
 # region Policy attachments
@@ -233,6 +272,11 @@ resource "aws_iam_role_policy_attachment" "put_course" {
 resource "aws_iam_role_policy_attachment" "delete_course" {
   role       = aws_iam_role.delete_course.name
   policy_arn = aws_iam_policy.delete_course.arn
+}
+
+resource "aws_iam_role_policy_attachment" "notify" {
+  role       = aws_iam_role.notify.name
+  policy_arn = aws_iam_policy.notify.arn
 }
 
 # endregion

@@ -22,6 +22,7 @@ module "iam" {
 
   dynamodb_author_arn = module.dynamodb_author.dynamodb_arn
   dynamodb_course_arn = module.dynamodb_course.dynamodb_arn
+  sns_topic_arn       = module.sns.sns_topic_arn
 }
 
 module "lambda" {
@@ -36,6 +37,7 @@ module "lambda" {
   save_course_arn     = module.iam.put_course_role_arn
   update_course_arn   = module.iam.put_course_role_arn
   delete_course_arn   = module.iam.delete_course_role_arn
+  notify_arn          = module.iam.notify_role_arn
 }
 
 module "api" {
@@ -73,4 +75,11 @@ module "cloudfront" {
   stage  = "dev"
 
   bucket_regional_domain_name = module.s3.bucket_regional_domain_name
+}
+
+module "sns" {
+  source = "./sns"
+
+  name  = "sns"
+  stage = "dev"
 }

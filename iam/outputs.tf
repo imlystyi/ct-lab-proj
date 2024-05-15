@@ -17,3 +17,7 @@ output "put_course_role_arn" {
 output "delete_course_role_arn" {
   value = aws_iam_role.delete_course.arn
 }
+
+output "notify_role_arn" {
+  value = aws_iam_role.notify.arn
+}
